@@ -3,17 +3,18 @@ import {
     View,
     StyleSheet,
     Text,
-    TouchableWithoutFeedback
+    TouchableWithoutFeedback,
+    TouchableOpacity
 } from "react-native"
 
 export default function GeneralButton ({title,onPress}) {
     return (
         <View style={Style.container} >
-            <TouchableWithoutFeedback onPress={onPress} >
+            <TouchableOpacity onPress={onPress} >
                 <View style={Style.button} >
                     <Text style={Style.title} >{title}</Text>
                 </View>
-            </TouchableWithoutFeedback>
+            </TouchableOpacity>
         </View>
     )
 }

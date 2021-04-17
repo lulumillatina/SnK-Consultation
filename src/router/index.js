@@ -11,7 +11,6 @@ import {
     ImageBackground,
     useWindowDimensions
 } from "react-native";
-import { IMHeaderBackground } from "../assets/illustrations";
 
 export default function Router (){
     const Stack = createStackNavigator();

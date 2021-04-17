@@ -10,37 +10,38 @@ import {
     ImageBackground,
     useWindowDimensions,
     FlatList,
-    ActivityIndicator,
-    SafeAreaView
+    ActivityIndicator
 } from "react-native"
-import { IMHeaderBackground, IMHomeBackground } from "../../assets"
+import axios from "axios"
+import { IMHeaderBackground} from "../../assets"
 import { Gap, GeneralButton, HomeDoctor, SearchBar } from "../../components"
 
 export default function searchPage ({navigation}) {
     const hp = useWindowDimensions().height
+
     const [search, setSearch] = useState('');
     const [isLoading, setLoading] = useState(true)
     const [doctorData, setDoctorData] = useState([])
-    const [offset,setOffset]= useState(1)
+    const [page,setPage]= useState(1)
     const [filteredData, setFilteredData] = useState([]);
 
-    useEffect(() => {
-        fetch(`https://reqres.in/api/users?page=${offset}`)
-          .then((response) => response.json())
-          .then((json) => {
-              setDoctorData([...json.data,...doctorData]);
-              setFilteredData([...json.data,...filteredData]);
+    useEffect(() => {    
+        axios.get(`https://reqres.in/api/users?page=${page}`)
+            .then(res => {
+                setDoctorData(res.data.data.concat(doctorData))
+                setFilteredData(res.data.data.concat(filteredData))
+                console.log(doctorData)
+                console.log(page)
+                setLoading(false)
             })
-          .catch((error) => console.error(error))
-          .finally(() => setLoading(false));
-      }, []);
+    },[page]);
 
       const searchFilterFunction = (text) => {
         if (text) {
           const newData = doctorData.filter(
             function (item) {
-              const itemData = item.title
-                ? item.title.toUpperCase()
+              const itemData = item.first_name
+                ? item.first_name.toUpperCase()
                 : ''.toUpperCase();
               const textData = text.toUpperCase();
               return itemData.indexOf(textData) > -1;
@@ -57,7 +58,10 @@ export default function searchPage ({navigation}) {
         return (
         <View style={{alignItems : "center", marginBottom : 10}}>
             <Gap height={5}/>
-            <GeneralButton title={"Find Out More"} onPress={()=> setOffset(offset + 1)}/>
+            <GeneralButton title={"Find Out More"} onPress={()=> {
+                if(page<3) {
+                     setPage(page + 1)
+            }}}/>
         </View>
     )}
 
@@ -72,11 +76,11 @@ export default function searchPage ({navigation}) {
         <View style={Style.container}>
            
             <Text style={Style.title}>Choose Your Doctor</Text>
-            <View style={Style.doctorList}>
+            <View>
                 {isLoading ? <ActivityIndicator/> : (
                     <FlatList
                         data={doctorData}
-                        keyExtractor={({ id }, index) => id}
+                        keyExtractor={(item, index) => index.toString()}
                         renderItem={({ item }) => (
                             <View>
                                 <HomeDoctor doctorName={item.first_name} 
@@ -111,8 +115,5 @@ const Style = StyleSheet.create({
         fontWeight : "bold",
         textAlign : "center",
         marginBottom : 20
-    },
-    doctorList : {
-        flexDirection : "column"
     }
 })

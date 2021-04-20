@@ -11,8 +11,7 @@ import {
     Image
 } from "react-native"
 import { 
-    ICBack, 
-    IMBackgroundProfile 
+    ICBack
 } from "../../assets"
 import { 
     GeneralButton,

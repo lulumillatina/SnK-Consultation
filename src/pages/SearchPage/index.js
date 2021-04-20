@@ -31,7 +31,6 @@ export default function searchPage ({navigation}) {
                 setDoctorData(res.data.data.concat(doctorData))
                 setFilteredData(res.data.data.concat(filteredData))
                 console.log(doctorData)
-                console.log(page)
                 setLoading(false)
             })
     },[page]);
@@ -59,14 +58,14 @@ export default function searchPage ({navigation}) {
         <View style={{alignItems : "center", marginBottom : 10}}>
             <Gap height={5}/>
             <GeneralButton title={"Find Out More"} onPress={()=> {
-                if(page<3) {
+                if(page<2) {
                      setPage(page + 1)
             }}}/>
         </View>
     )}
 
     return (
-        <ImageBackground source={IMHeaderBackground} style={{ width : "100%"}} >
+        <ImageBackground source={IMHeaderBackground} style={{ width : "100%", flex : 1}} >
         <View style={{height : (hp>600? 0.1*hp: 0.2*hp), marginTop: 35}}>
             <SearchBar 
                 onChangeText={(text) => searchFilterFunction(text)}
@@ -76,10 +75,10 @@ export default function searchPage ({navigation}) {
         <View style={Style.container}>
            
             <Text style={Style.title}>Choose Your Doctor</Text>
-            <View>
                 {isLoading ? <ActivityIndicator/> : (
+                    <View style={{flexGrow : 1}}>
                     <FlatList
-                        data={doctorData}
+                        data={filteredData}
                         keyExtractor={(item, index) => index.toString()}
                         renderItem={({ item }) => (
                             <View>
@@ -93,11 +92,11 @@ export default function searchPage ({navigation}) {
                             </View>
                         )}
                         numColumns={3}
-                        ListFooterComponent={footerComponent}
+                        ListFooterComponent={(page<2? footerComponent : null)}
                     />
+                    </View>
                 )}
             </View>
-        </View>
         </ImageBackground>
     )
 }
@@ -108,7 +107,8 @@ const Style = StyleSheet.create({
         borderTopLeftRadius : 25,
         paddingHorizontal : 10,
         paddingTop : 15,
-        alignItems : "center"
+        alignItems : "center",
+        flex : 1
     },
     title : {
         fontSize : 20,
